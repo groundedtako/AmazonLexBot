@@ -16,7 +16,7 @@
 -   [x] Basic DynamoDB Operations
 
 
-### Questions
+### Discussed
 -   [ ] EC2 operations, launch which operating system and avoid AMI. 
         Golend image. All instances are spawned using the golden AMI, immutable, apply tags.
         Tag: Golden_AMI. 
@@ -37,8 +37,10 @@
 -   [ ] Use a proper unit testing framework. 
         Itegration testing framework. 
 
+
         Canary?
-                
+
+        Chaos monkey test framework.
         Unit testing works in isolation. 
                 Mock every single services that uses this unit.
                 Unit testing should be part of the build process. Framework triggered as soon as it is finished building.
