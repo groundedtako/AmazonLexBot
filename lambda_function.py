@@ -2,8 +2,8 @@ import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
 import logging  #logging for cloudwatch
 from lambdaUtils import * #lambdaUtils for lex interactions
-from handleDdbEvent import * #handleDdbEvent to handle ddb events from the user
-from handleEc2Event import * #handleEc2Event to handle ec2 events from the user
+from handleDDBEvent import * #handleDdbEvent to handle ddb events from the user
+from handleEC2Event import * #handleEc2Event to handle ec2 events from the user
 from handleS3Event import * #handleS3Event to handle s3 events from the user
 
 
