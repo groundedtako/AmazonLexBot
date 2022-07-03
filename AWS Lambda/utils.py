@@ -4,7 +4,7 @@ import typing   #typing for python typing
 ### Utils Functions
 
 def get_random_id(type: str) -> typing.Union[int, str]:
-    """Generate a random id based on the args
+    """Generate a random id based on given type
 
     Args:
         type (str): data type for the random id
@@ -19,19 +19,32 @@ def get_random_id(type: str) -> typing.Union[int, str]:
     id = uuid.uuid4()
     if(type == 'N'):
         return id.int >> 64
-    return str(id)
+    id = str(id)
+    if(type == 'B'):
+        return id.encode('ascii')
+    return id
 
 def get_intent_name(intent_request: dict) -> str:
-    '''
-    Return the corrsponding intent 
-    '''
+    """Get intent's name based on the event input
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+
+    Returns:
+        str: Intent Name
+    """    
     return intent_request["sessionState"]["intent"]["name"]
 
 
 def get_session_attributes(intent_request: dict) -> dict:
-    '''
-    Return session attributes
-    '''
+    """Get session's attributes based on the event input
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+
+    Returns:
+        dict: Session Attributes or Empty dict
+    """    
     sessionState = intent_request["sessionState"]
     if "sessionAttributes" in sessionState:
         return sessionState["sessionAttributes"]
@@ -39,16 +52,28 @@ def get_session_attributes(intent_request: dict) -> dict:
 
 
 def get_slots(intent_request: dict) -> dict:
-    '''
-    Return all the slots
-    '''
+    """Get all the slots based on the event input
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+
+    Returns:
+        dict: All the slots
+    """    
     return intent_request["sessionState"]["intent"]["slots"]
 
 
 def get_slot(intent_request: dict, slotName: str, original: bool = False) -> str:
-    '''
-    Return the corrrsponding slot or None
-    '''
+    """Get the corrsponding slot based on name
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+        slotName (str): Slot Name
+        original (bool, optional): Original value instead of Resolved value.  Defaults to False.
+
+    Returns:
+        str: Corrsponding value or None
+    """    
     slots = get_slots(intent_request)
     if slots is not None and slotName in slots and slots[slotName] is not None:
         val = slots[slotName]["value"]
@@ -57,12 +82,11 @@ def get_slot(intent_request: dict, slotName: str, original: bool = False) -> str
         return None
 
 
-### Response Functions
+### Response Functions      
 #Todo ConfirmIntent
 
-
 '''
-There are 5 type of dialog actions
+There are 5 type of dialog actions (https://docs.aws.amazon.com/lex/latest/dg/API_runtime_DialogAction.html)
 
 - Close - Indicates that there will not be a response from the user.
           For example, the statement "Your order has been placed" does not require a response.
@@ -79,6 +103,17 @@ There are 5 type of dialog actions
 
 
 def close(intent_request: dict, fulfillment_state: str, message: str) -> dict:
+    """Generate response back to Amazon Lex with Dialog Action = Close
+       - Indicates that there will not be a response from the user.
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+        fulfillment_state (str): The fulfillment state of the intent
+        message (str): The message that should be shown to the user
+
+    Returns:
+        dict: Response for closing dialog action
+    """    
     intent_request["sessionState"]["intent"]["state"] = fulfillment_state
     return {
         "sessionState": {
@@ -98,6 +133,16 @@ def close(intent_request: dict, fulfillment_state: str, message: str) -> dict:
 
 
 def elicit_intent(intent_request, message):
+    """Generate response back to Amazon Lex with Dialog Action = Elicit Intent
+       - The next action is to elicit an intent from the user.
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+        message (str): The message that should be shown to the user
+
+    Returns:
+        dict: Response for elicit intent dialog action
+    """    
     intent_request["sessionState"]["intent"]["state"] = "InProgress"
     return {
         "sessionState": {
@@ -116,6 +161,17 @@ def elicit_intent(intent_request, message):
 
 
 def elicit_slot(intent_request, new_slot_name, message):
+    """Generate response back to Amazon Lex with Dialog Action = Elicit Slot
+       - The next action is to elicit a slot value from the user.
+
+    Args:
+        intent_request (_type_): Amazon Lex Event Input
+        new_slot_name (_type_): The name of the slot that should be elicited from the user.
+        message (_type_): The message that should be shown to the user.
+
+    Returns:
+        _type_: Response for elicit slot dialog action
+    """    
     intent_request["sessionState"]["intent"]["state"] = "InProgress"
     return {
         "sessionState": {
