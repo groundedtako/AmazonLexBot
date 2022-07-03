@@ -94,11 +94,11 @@ To import a Lex Bot into your own AWS account
 
 3. For Actions, choose Import.
 
-4. For Import Bot, choose the [.zip archive](https://github.com/Kelvin-Hui/AmazonLexBot/blob/main/ResourceLex-LexBot.zip) that contains the JSON file that contains the bot to import. If you want to see merge conflicts before merging, choose to Notify me of merge conflicts. If you turn off conflict checking, the $LATEST version of all of the resources used by the bot is overwritten.
+4. For Import Bot, choose the [.zip archive](https://github.com/Kelvin-Hui/AmazonLexBot/blob/main/Amazon%20Lex/ResourceLex-LexBot.zip) that contains the JSON file that contains the bot to import. If you want to see merge conflicts before merging, choose to Notify me of merge conflicts. If you turn off conflict checking, the $LATEST version of all of the resources used by the bot is overwritten.
 
 5. Choose Import. If you have chosen to be notified of merge conflicts and there are conflicts, a dialog appears that lists them. To overwrite the $LATEST version of all conflicting resources, choose Overwrite and continue. To stop the import, choose Cancel.
 
-6. Make Sure you have a valid [lambda function](https://github.com/Kelvin-Hui/AmazonLexBot/blob/main/handleLexEventInput.py) both deployed and attached to the bot before you build & test
+6. Make Sure you have a valid [lambda function](https://github.com/Kelvin-Hui/AmazonLexBot/blob/main/AWS%20Lambda/handleLexEventInput.zip) both deployed and attached to the bot before you build & test
 
 </br>
 
