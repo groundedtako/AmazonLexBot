@@ -36,8 +36,7 @@ def create_test_event(resource: str, intent_name: str, slots_pairs: dict) -> dic
         slots_pairs (dict): key-value pairs for given intent (Exclude resource / action)
 
     Returns:
-        dict: resulting test event input based on args
-              remember to remove ' ' 
+        dict: resulting test event input based on args json object
     """
 
     slots = {}
