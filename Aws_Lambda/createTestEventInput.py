@@ -75,5 +75,4 @@ def create_test_event(resource: str, intent_name: str, slots_pairs: dict) -> dic
             }
         }
     }
-
-    return json.dumps(TestEventInput)
+    return TestEventInput
