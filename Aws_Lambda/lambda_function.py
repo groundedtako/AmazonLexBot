@@ -26,7 +26,7 @@ def dispatch(intent_request: dict) -> dict:
         return close(intent_request, "Fulfilled", f"What action you want to do with {resourceType}?")
 
     #Switch Statement Available after Python 3.10
-    if resourceType == "EC2":
+    if resourceType == 'EC2':
         return ec2_handler(intent_request, action)
     elif resourceType == 'DynamoDB':
         return ddb_handler(intent_request, action)
