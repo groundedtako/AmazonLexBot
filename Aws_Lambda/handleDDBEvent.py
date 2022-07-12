@@ -127,4 +127,5 @@ def ddb_handler(intent_request: dict, action: str) -> dict:
     else:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
 
+
     return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
