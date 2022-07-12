@@ -35,6 +35,7 @@ def ddb_create_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
     #TODO could ask user to input
     billingMode = 'PAY_PER_REQUEST'
 
+    
     table = ddb_client.create_table(AttributeDefinitions=attributeDefinitions, TableName=tableName,
                                     KeySchema=keySchema, BillingMode=billingMode)
 
@@ -127,3 +128,4 @@ def ddb_handler(intent_request: dict, action: str) -> dict:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
 
     return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
+

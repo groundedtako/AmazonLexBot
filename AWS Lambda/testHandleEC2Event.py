@@ -10,7 +10,6 @@ from createTestEventInput import *
 
 @mock_ec2
 class TestMockClassLevel(unittest.TestCase):
-
     def __init__(self):
         self.ec2_client = boto3.client("ec2", region_name="us-east-1")
 
@@ -18,6 +17,7 @@ class TestMockClassLevel(unittest.TestCase):
         # case 1: create ec2 instance with valid parameters
         resource = "ec2"
         intent_name = "EC2StartInstanceIntent"  # TODO not yet supported
+
         imageId = ""
         intent_request = create_test_event(resource, intent_name, slots_pairs)
         bucket = ddb_create_table(self.ddb_client, intent_request)
@@ -43,3 +43,4 @@ class TestMockClassLevel(unittest.TestCase):
 
 if __name__ == "__main__":
     test = TestMockClassLevel()
+

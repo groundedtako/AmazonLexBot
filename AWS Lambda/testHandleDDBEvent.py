@@ -67,6 +67,7 @@ class TestMockClassLevel(unittest.TestCase):
         intent_name = "DynamoDBCreateItemIntent"
         slots_pairs = {"tableName": "testing_table_for_creating_item",
                        "attributeName": "test_item_name", "attributeValue": "test_item_val"}
+                       
         intent_request = create_test_event(self.resource, intent_name, slots_pairs)
         result = ddb_create_item(self.ddb_client, intent_request)
         assert result[0] == True
@@ -84,7 +85,7 @@ class TestMockClassLevel(unittest.TestCase):
         # case 4: create item in non-existing table
         # expected: abort and notify user
         slots_pairs = {"tableName": "invalid_table", "attributeName": "test_item_name_1",
-                       "attributeValue": "test_item_val_1"}
+                       "attributeValue": "test_item_val_1"}        
         intent_request = create_test_event(self.resource, intent_name, slots_pairs)
         result = ddb_create_item(self.ddb_client, intent_request)
         assert result.type != tuple and result.type == dict
@@ -97,3 +98,4 @@ class TestMockClassLevel(unittest.TestCase):
 if __name__ == "__main__":
     test = TestMockClassLevel()
     test.test_ddb_creating_table()
+
