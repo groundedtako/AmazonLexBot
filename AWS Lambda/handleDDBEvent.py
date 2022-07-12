@@ -1,6 +1,6 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
-from utils import * #lambdaUtils for lex interactions
+from utils import *  #lambdaUtils for lex interactions
 
 ### DynamoDB
 
@@ -37,7 +37,7 @@ def ddb_create_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
 
     
     table = ddb_client.create_table(AttributeDefinitions=attributeDefinitions, TableName=tableName,
-                                      KeySchema=keySchema, BillingMode=billingMode)
+                                    KeySchema=keySchema, BillingMode=billingMode)
 
     if table is None:
         return False, "Fail Creating Table"
@@ -59,7 +59,7 @@ def ddb_create_item(ddb_client: typing.Any, intent_request: dict) -> tuple:
 
     Todo:
         May want another slot for attribute's type
-    """    
+    """
     tableName = get_slot(intent_request, "tableName", True)
     #Todo validate table!
 
@@ -77,12 +77,12 @@ def ddb_create_item(ddb_client: typing.Any, intent_request: dict) -> tuple:
     attributeValue = get_slot(intent_request, "attributeValue")
 
     item_dict = {
-        table_key:{
-            table_key_type : get_random_id(table_key_type)
-        } ,
-        attributeName:{
-            table_key_type : attributeValue
-        } 
+        table_key: {
+            table_key_type: get_random_id(table_key_type)
+        },
+        attributeName: {
+            table_key_type: attributeValue
+        }
     }
 
     rsp = ddb_client.put_item(TableName=tableName, Item=item_dict)
@@ -93,7 +93,7 @@ def ddb_create_item(ddb_client: typing.Any, intent_request: dict) -> tuple:
     return True, f"Successfully Created Item! {item_dict}"
 
 
-def ddb_delete_table(ddb_client: typing.Any, intent_request:dict) -> tuple:
+def ddb_delete_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
     """Deleting Table in DynamoDB
 
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Client.delete_table
@@ -104,7 +104,7 @@ def ddb_delete_table(ddb_client: typing.Any, intent_request:dict) -> tuple:
 
     Returns:
         tuple: (Status, The message that should be shown to the user)
-    """    
+    """
     tableName = get_slot(intent_request, "tableName", True)
 
     rsp = ddb_client.delete_table(TableName=tableName)
@@ -127,5 +127,5 @@ def ddb_handler(intent_request: dict, action: str) -> dict:
     else:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
 
-
     return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
+

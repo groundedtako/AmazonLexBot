@@ -1,6 +1,6 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
-from utils import * #util functions for lex interactions
+from utils import *  #util functions for lex interactions
 
 ### S3
 
@@ -16,8 +16,8 @@ def s3_create_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
 
     Returns:
         tuple: (Status, The message that should be shown to the user)
-    """    
-    
+    """
+
     bucket_name = get_slot(intent_request, "bucketName", True)
 
     bucket = s3_client.create_bucket(Bucket=bucket_name)
@@ -39,7 +39,7 @@ def s3_put_object(s3_client: typing.Any, intent_request: dict) -> tuple:
 
     Returns:
         tuple: (Status, The message that should be shown to the user)
-    
+
     Notes:
         only support text as object right now.
     """
@@ -89,8 +89,8 @@ def s3_delete_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
 
     Returns:
         tuple: (Status, The message that should be shown to the user)
-    """    
-    
+    """
+
     bucket_name = get_slot(intent_request, "bucketName", True)
 
     bucket = s3_client.delete_bucket(Bucket=bucket_name)
@@ -101,7 +101,7 @@ def s3_delete_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
 
 
 def s3_handler(intent_request: dict, action: str) -> dict:
-    """Amazon S3's handler 
+    """Amazon S3's handler
 
     Args:
         intent_request (dict): Amazon Lex Event Input
@@ -109,7 +109,7 @@ def s3_handler(intent_request: dict, action: str) -> dict:
 
     Returns:
         dict: Close response
-    """    
+    """
     s3_client = boto3.client("s3")
 
     if action == "CreateBucket":

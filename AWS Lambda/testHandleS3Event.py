@@ -1,15 +1,16 @@
-from cgi import test
-import resource
-from unittest import mock
 import boto3
-from moto import mock_s3
-from handleS3Event import *
-import typing
 import unittest
+
+from cgi import test
+from moto import mock_s3
+
+from handleS3Event import *
 from createTestEventInput import *
+
 
 @mock_s3
 class TestMockClassLevel(unittest.TestCase):
+
     def __init__(self):
         self.s3_client = boto3.client("s3", region_name="us-east-1")
 
@@ -22,7 +23,6 @@ class TestMockClassLevel(unittest.TestCase):
         assert bucket == False
 
         # case 2: creating a bucket with existing parameters
-
 
     def test_s3_put_object(self):
 
