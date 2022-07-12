@@ -1,6 +1,6 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
-from utils import * #util functions for lex interactions
+from utils import *  #util functions for lex interactions
 from constants import *
 
 
@@ -29,8 +29,8 @@ def ec2_lifecycle_control(ec2_client: typing.Any, intent_request: dict, action: 
 
     Notes:
         - DryRun option to check for permission
-        - Check Instance State (In case flooding requests) using describe_instances() 
-    """    
+        - Check Instance State (In case flooding requests) using describe_instances()
+    """
     instanceId = get_slot(intent_request, "instanceId")
 
     if action == "StartInstance":

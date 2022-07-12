@@ -1,23 +1,23 @@
-from cgi import test
-import resource
-from unittest import mock
 import boto3
-from moto import mock_ec2
-from handleDDBEvent import *
-import typing
 import unittest
+
+from cgi import test
+from moto import mock_ec2
+
+from handleDDBEvent import *
 from createTestEventInput import *
+
 
 @mock_ec2
 class TestMockClassLevel(unittest.TestCase):
+
     def __init__(self):
         self.ec2_client = boto3.client("ec2", region_name="us-east-1")
 
     def test_ec2_create_instance(self):
-        
         # case 1: create ec2 instance with valid parameters
-        resource = resource="ec2"
-        intent_name="EC2StartInstanceIntent" # TODO not yet supported
+        resource = "ec2"
+        intent_name = "EC2StartInstanceIntent"  # TODO not yet supported
         imageId = ""
         intent_request = create_test_event(resource, intent_name, slots_pairs)
         bucket = ddb_create_table(self.ddb_client, intent_request)
@@ -41,8 +41,5 @@ class TestMockClassLevel(unittest.TestCase):
         # case 2: delete a non-existing table
         pass
 
-    
 if __name__ == "__main__":
     test = TestMockClassLevel()
-
-    
