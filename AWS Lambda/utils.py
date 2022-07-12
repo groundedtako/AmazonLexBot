@@ -1,7 +1,8 @@
 import uuid     #unique id
 import typing   #typing for python typing
 
-### Utils Functions
+
+### Lex Utils Functions
 
 def get_random_id(type: str) -> typing.Union[int, str]:
     """Generate a random id based on given type
