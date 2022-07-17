@@ -1,17 +1,22 @@
 ### ToDo
 
--   [ ] Parameters Validation
 -   [ ] Enhance Conversation Flow
--   [ ] Change DynamoDB Implementation to Client instead of Resource
--   [ ] Handle Exceptions
 -   [ ] Figure out Tagging API
 -   [ ] EC2's Golden AMI?
--   [ ] Checkout [Moto](http://docs.getmoto.org/en/latest/) AWS mocking testing framework
+-   [ ] AWS Auto Scaling? / AWS Backup? / Amazon CloudWatch? / Amazon EventBridge?
 
 ### InProgress
+
+-   [ ] DynamoDB / S3 Parameters Validation
+-   [ ] DynamoDB / S3 Exception Handling
+-   [ ] Create Mock Test For DynamoDB / S3 Operations
 
 ### Done
 
 -   [x] Basic EC2 Operations
 -   [x] Basic S3 Operations
 -   [x] Basic DynamoDB Operations
+-   [x] Unified Implementation to Client instead of Resource
+-   [x] Confirm Prompts For User
+-   [x] EC2 Exception Handling
+-   [x] Create Mock Test For EC2 Operations
