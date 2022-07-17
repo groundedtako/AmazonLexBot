@@ -22,7 +22,7 @@ def create_instance_id(ec2_client, get_ami):
                                             MinCount=1,
                                             MaxCount=1,
                                             InstanceType="t2.nano")
-    yield instance_rsp["Instances"][0]["InstanceId"]
+    return instance_rsp["Instances"][0]["InstanceId"]
 
 
 '''
@@ -38,8 +38,11 @@ EC2 Instance State (Code : Name):
 
 
 def test_ec2_create(ec2_client, get_ami):
+    #ec2_client fixture run here
+    #get_ami fixture run here
+
     ec2 = MyEC2Client()
-    ec2.list_instances()
+    assert len(ec2.list_instances()) == 0
 
     print("\nTesting EC2CreateInstanceIntent:")
     test_intent = create_test_event("EC2", "EC2CreateInstanceIntent", {"amazonMachineImages": get_ami, "minCount": 1,
@@ -55,8 +58,10 @@ def test_ec2_start(ec2_client, get_ami, create_instance_id):
     mock_instance_id = create_instance_id
     ec2 = MyEC2Client()
     ec2.check_instances_state(mock_instance_id)
-    ec2.control_instance_lifecycle(mock_instance_id, "Stop")
-    ec2.check_instances_state(mock_instance_id)
+    ec2.control_instance_lifecycle(mock_instance_id, "StopInstance")
+    init_state = ec2.check_instances_state(mock_instance_id)
+    assert init_state["Code"] == 80
+    assert init_state["Name"] == 'stopped'
 
     print("\nTesting EC2StartInstanceIntent:")
     test_intent = create_test_event("EC2", "EC2StartInstanceIntent", {"instanceId": mock_instance_id})
@@ -72,7 +77,9 @@ def test_ec2_start(ec2_client, get_ami, create_instance_id):
 def test_ec2_stop(ec2_client, get_ami, create_instance_id):
     mock_instance_id = create_instance_id
     ec2 = MyEC2Client()
-    ec2.check_instances_state(mock_instance_id)
+    init_state = ec2.check_instances_state(mock_instance_id)
+    assert init_state["Code"] == 16
+    assert init_state["Name"] == 'running'
 
     print("\nTesting EC2StopInstanceIntent:")
     test_intent = create_test_event("EC2", "EC2StopInstanceIntent", {"instanceId": mock_instance_id})
@@ -88,7 +95,9 @@ def test_ec2_stop(ec2_client, get_ami, create_instance_id):
 def test_ec2_terminate(ec2_client, get_ami, create_instance_id):
     mock_instance_id = create_instance_id
     ec2 = MyEC2Client()
-    ec2.check_instances_state(mock_instance_id)
+    init_state = ec2.check_instances_state(mock_instance_id)
+    assert init_state["Code"] == 16
+    assert init_state["Name"] == 'running'
 
     print("\nTesting EC2TerminateInstanceIntent:")
     test_intent = create_test_event("EC2", "EC2TerminateInstanceIntent", {"instanceId": mock_instance_id})
