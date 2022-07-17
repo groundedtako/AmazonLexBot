@@ -1,10 +1,16 @@
-import boto3    #boto3 to interact with AWS services
-import typing   #typing for python typing
-import logging  #logging for cloudwatch
-import botocore
+import boto3     #boto3 to interact with AWS services
+import botocore  #boto3 exceptions
+import logging   #logging for cloudwatch
+import typing    #typing for python typing
 import sys
-from utils import *  #util functions for lex interactions
-from constants import *
+
+#Hard Coded In Order To Test
+if __name__ == 'AWS_Lambda.handleEC2Event':
+    from AWS_Lambda.utils import *
+    from AWS_Lambda.constants import *
+else:
+    from utils import *  #util functions for lex interactions
+    from constants import *
 
 ### EC2
 

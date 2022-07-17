@@ -1,6 +1,11 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
-from utils import *  #util functions for lex interactions
+
+#Hard Coded In Order To Test
+if __name__ == 'AWS_Lambda.handleDDBEvent':
+    from AWS_Lambda.utils import *
+else:
+    from utils import *  #util functions for lex interactions
 
 ### S3
 
