@@ -1,10 +1,14 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
+import logging  #logging for cloudwatch
+import botocore
+import sys
 from utils import *  #util functions for lex interactions
 from constants import *
 
-
 ### EC2
+
+logger = logging.getLogger()
 
 
 def ec2_lifecycle_control(ec2_client: typing.Any, intent_request: dict, action: str) -> tuple:
@@ -33,45 +37,26 @@ def ec2_lifecycle_control(ec2_client: typing.Any, intent_request: dict, action: 
     """
     instanceId = get_slot(intent_request, "instanceId")
 
-    if action == "StartInstance":
-        rsp = ec2_client.start_instances(InstanceIds=[instanceId])
-    elif action == "StopInstance":
-        rsp = ec2_client.stop_instances(InstanceIds=[instanceId])
-    elif action == "TerminateInstance":
-        rsp = ec2_client.terminate_instances(InstanceIds=[instanceId])
+    try:
+        if action == "StartInstance":
+            rsp = ec2_client.start_instances(InstanceIds=[instanceId])
+        elif action == "StopInstance":
+            rsp = ec2_client.stop_instances(InstanceIds=[instanceId])
+        elif action == "TerminateInstance":
+            rsp = ec2_client.terminate_instances(InstanceIds=[instanceId])
+        elif action == "RebootInstance":
+            rsp = ec2_client.reboot_instances(InstanceIds=[instanceId])
+
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if rsp is None:
         return False, f"Fail {action}!"
+
     return True, f"Successfully {action} (Instance's Id : {instanceId})"
-
-# def ec2_stop_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
-#     instanceId = get_slot(intent_request, "instanceId")
-
-#     rsp = ec2_client.stop_instances(InstanceIds=[instanceId])
-
-#     if rsp is None:
-#         return False, "Fail Stopping Instance"
-#     return True, f"Successfully Stopped Instance (Instance's Id : {instanceId})"
-
-
-# def ec2_terminate_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
-#     instanceId = get_slot(intent_request, "instanceId")
-
-#     rsp = ec2_client._instances(InstanceIds=[instanceId])
-
-#     if rsp is None:
-#         return False, "Fail Stopping Instance"
-#     return True, f"Successfully Stopped Instance (Instance's Id : {instanceId})"
-
-
-# def ec2_start_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
-#     instanceId = get_slot(intent_request, "instanceId")
-
-#     rsp = ec2_client.stop_instances(InstanceIds=[instanceId])
-
-#     if rsp is None:
-#         return False, "Fail Stopping Instance"
-#     return True, f"Successfully Stopped Instance (Instance's Id : {instanceId})"
 
 
 def ec2_create_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
@@ -93,12 +78,21 @@ def ec2_create_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
     instanceType = get_slot(intent_request, "instanceType")
     # keyName = get_slot(intent_request, "keyName")
 
-    instance = ec2_client.run_instances(
-        ImageId=imageId,
-        MinCount=minCount,
-        MaxCount=maxCount,
-        InstanceType=instanceType,
-    )
+    try:
+        instance = ec2_client.run_instances(
+            ImageId=imageId,
+            MinCount=minCount,
+            MaxCount=maxCount,
+            InstanceType=instanceType,
+        )
+
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if instance is None:
         return False, "Fail Creating Instance"
