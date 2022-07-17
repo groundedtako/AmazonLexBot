@@ -512,5 +512,6 @@ This is the general response format that Amazon Lex expects from Lambda
 -   [Amazon Lex V2 Deveoper Guide](https://docs.aws.amazon.com/lexv2/latest/dg/lex2.0.pdf)
 -   [Sharing Slots Between Intent Using Context](https://docs.aws.amazon.com/lex/latest/dg/context-mgmt-active-context.html)
 -   [More Terminology Explanations](https://docs.aws.amazon.com/lexv2/latest/dg/API_Types_Amazon_Lex_Runtime_V2.html)
-
-</br>
+-   [Moto Documentation](http://docs.getmoto.org/en/latest/docs/getting_started.html)
+-   [Moto + Pytest Example](https://www.learnaws.org/2020/12/01/test-aws-code/)
+    </br>
