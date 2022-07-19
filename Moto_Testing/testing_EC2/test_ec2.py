@@ -36,7 +36,6 @@ EC2 Instance State (Code : Name):
 80 : Stopped
 '''
 
-
 def test_ec2_create(ec2_client, get_ami):
     #ec2_client fixture run here
     #get_ami fixture run here
@@ -46,7 +45,7 @@ def test_ec2_create(ec2_client, get_ami):
 
     print("\nTesting EC2CreateInstanceIntent:")
     test_intent = create_test_event("EC2", "EC2CreateInstanceIntent", {"amazonMachineImages": get_ami, "minCount": 1,
-                                                                       "maxCount": 1, "instanceType": "t2.nano"})
+                                                                       "maxCount": 1, "instanceType": "t2.nano", "region_name": "us-east-1"})
     mock_rsp = ec2_create_instance(ec2.client, test_intent)
     print(mock_rsp)
 
