@@ -1,4 +1,3 @@
-import mock
 import pytest
 from ddb import MyDDBClient
 
@@ -9,6 +8,7 @@ sys.path.append('../../../AmazonLexBot')
 
 from AWS_Lambda.handleDDBEvent import *
 from AWS_Lambda.createTestEventInput import create_test_event
+
 
 @pytest.fixture
 def table_schema():
@@ -56,7 +56,7 @@ def test_ddb_delete_table(dynamodb_client):
 
 
 def test_ddb_create_item(dynamodb_client):
-    
+
     ddb = MyDDBClient()
     table = ddb.create_ddb_table()
     assert len(ddb.list_tables()) == 1
@@ -64,13 +64,11 @@ def test_ddb_create_item(dynamodb_client):
     print("\nTesting DynamoDBCreateItemIntent: ")
     slots_pairs = {"tableName": "testing_table", "attributeName": "testing_record", "attributeValue": "testing_val"}
     test_intent = create_test_event("DynamoDB", "DynamoDBCreateItemIntent", slots_pairs)
-    
+
     mock_rsp = ddb_create_item(ddb.client, test_intent)
     print(mock_rsp)
     assert mock_rsp[0] == True
-    
+
     table_info = ddb.client.describe_table(TableName="testing_table")
     item_count = table_info["Table"]["ItemCount"]
     assert item_count == 1
-
-

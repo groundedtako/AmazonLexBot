@@ -16,21 +16,18 @@ class MyDDBClient:
 
     def create_ddb_table(self):
         table_rsp = self.client.create_table(
-            TableName = "testing_table",
+            TableName="testing_table",
             KeySchema=[
-                    {
-                        'AttributeName': 'RecordId',
-                        'KeyType': 'HASH'
-                    },
-                ],
-                AttributeDefinitions=[
-                    {
-                        'AttributeName': 'RecordId',
-                        'AttributeType': 'S'
-                    },
-                ],
-                BillingMode='PAY_PER_REQUEST'
-            )
+                {
+                    'AttributeName': 'RecordId',
+                    'KeyType': 'HASH'
+                },
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'RecordId',
+                    'AttributeType': 'S'
+                },
+            ],
+            BillingMode='PAY_PER_REQUEST')
         return table_rsp
-
-
