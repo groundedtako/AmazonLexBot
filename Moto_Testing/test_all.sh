@@ -1,8 +1,9 @@
+#!/bin/bash
 cd testing_DDB
 
 pytest test_ddb.py -s
 
-pause
+read -p "Press any key to continue..."
 
 cd .. 
 
@@ -10,7 +11,7 @@ cd testing_EC2
 
 pytest test_ec2.py -s
 
-pause
+read -p "Press any key to continue..."
 
 cd ..
 
@@ -20,4 +21,4 @@ pytest test_s3.py -s
 
 cd ..
 
-pause
+read -p "Press any key to continue..."

@@ -10,7 +10,7 @@ from AWS_Lambda.createTestEventInput import create_test_event
 
 @pytest.fixture
 def bucket_name():
-    return "Testing"
+    return "testing"
 
 @pytest.fixture
 def body():
@@ -31,12 +31,12 @@ def create_object(s3_client, bucket_name, body, key):
     yield
 
 
-def test_s3_create_bucket(s3_client):
+def test_s3_create_bucket(s3_client, bucket_name):
     s3 = MyS3Client()
     assert len(s3.list_buckets()) == 0
 
     print("\nTesting S3CreateBucketIntent:")
-    test_intent = create_test_event("S3", "S3CreateBucketIntent", {"bucketName" : "Testing"})
+    test_intent = create_test_event("S3", "S3CreateBucketIntent", {"bucketName" : bucket_name})
 
     mock_rsp = s3_create_bucket(s3.client, test_intent)
     print(mock_rsp)
