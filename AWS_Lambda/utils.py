@@ -162,13 +162,13 @@ def elicit_intent(intent_request, message):
     }
 
 
-def elicit_slot(intent_request, new_slot_name, message):
+def elicit_slot(intent_request, slot_name, message):
     """Generate response back to Amazon Lex with Dialog Action = Elicit Slot
        - The next action is to elicit a slot value from the user.
 
     Args:
         intent_request (_type_): Amazon Lex Event Input
-        new_slot_name (_type_): The name of the slot that should be elicited from the user.
+        slot_name (_type_): The name of the slot that should be elicited from the user.
         message (_type_): The message that should be shown to the user.
 
     Returns:
@@ -179,7 +179,7 @@ def elicit_slot(intent_request, new_slot_name, message):
         "sessionState": {
             "dialogAction": {
                 "type": "ElicitSlot",
-                "slotToElicit": new_slot_name
+                "slotToElicit": slot_name
             },
             "sessionAttributes": get_session_attributes(intent_request),
             "intent": intent_request["sessionState"]["intent"]

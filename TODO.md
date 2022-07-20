@@ -7,10 +7,6 @@
 
 ### InProgress
 
--   [ ] DynamoDB / S3 Parameters Validation
--   [ ] DynamoDB / S3 Exception Handling
--   [ ] Create Mock Test For DynamoDB / S3 Operations
-
 ### Done
 
 -   [x] Basic EC2 Operations
@@ -20,3 +16,6 @@
 -   [x] Confirm Prompts For User
 -   [x] EC2 Exception Handling
 -   [x] Create Mock Test For EC2 Operations
+-   [x] DynamoDB / S3 Parameters Validation
+-   [x] DynamoDB / S3 Exception Handling
+-   [x] Create Mock Test For DynamoDB / S3 Operations

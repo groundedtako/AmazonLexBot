@@ -1,5 +1,9 @@
-import boto3    #boto3 to interact with AWS services
-import typing   #typing for python typing
+import boto3     #boto3 to interact with AWS services
+import botocore  #boto3 exceptions
+import typing    #typing for python typing
+import re        #regex for param checking
+import logging   #logging for cloudwatch
+import sys
 
 #Hard Coded In Order To Test
 if __name__ == 'AWS_Lambda.handleDDBEvent':
@@ -9,6 +13,14 @@ else:
 
 
 ### DynamoDB
+
+logger = logging.getLogger()
+
+
+def valid_table_name(tableName: str) -> bool:
+    if re.match(r'[a-zA-Z0-9._-]{3,255}', tableName):
+        return True
+    return False
 
 
 def ddb_create_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
@@ -28,6 +40,11 @@ def ddb_create_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
     key_type = get_slot(intent_request, "partitionKeyType")
     tableName = get_slot(intent_request, "tableName", True)
 
+    #Parameter Checking For TableName
+    # - Between 3 and 255 characters, containing only letters, numbers, underscores (_), hyphens (-), and periods (.).
+    if not valid_table_name(tableName):
+        return elicit_slot(intent_request, "tableName", "Invalid Table Name, Please Enter A Valid Table Name.")
+
     attributeDefinitions = [{
         'AttributeName': table_key,
         'AttributeType': key_type
@@ -41,8 +58,16 @@ def ddb_create_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
     #TODO could ask user to input
     billingMode = 'PAY_PER_REQUEST'
 
-    table = ddb_client.create_table(AttributeDefinitions=attributeDefinitions, TableName=tableName,
-                                    KeySchema=keySchema, BillingMode=billingMode)
+    try:
+        table = ddb_client.create_table(AttributeDefinitions=attributeDefinitions, TableName=tableName,
+                                        KeySchema=keySchema, BillingMode=billingMode)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if table is None:
         return False, "Fail Creating Table"
@@ -66,7 +91,11 @@ def ddb_create_item(ddb_client: typing.Any, intent_request: dict) -> tuple:
         May want another slot for attribute's type
     """
     tableName = get_slot(intent_request, "tableName", True)
-    #Todo validate table!
+
+    #Parameter Checking For TableName
+    # - Between 3 and 255 characters, containing only letters, numbers, underscores (_), hyphens (-), and periods (.).
+    if not valid_table_name(tableName):
+        return elicit_slot(intent_request, "tableName", "Invalid Table Name, Please Enter A Valid Table Name.")
 
     #Get The Table's Primary Key
     #Maybe we should prompt the user for primary key
@@ -90,7 +119,15 @@ def ddb_create_item(ddb_client: typing.Any, intent_request: dict) -> tuple:
         }
     }
 
-    rsp = ddb_client.put_item(TableName=tableName, Item=item_dict)
+    try:
+        rsp = ddb_client.put_item(TableName=tableName, Item=item_dict)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if rsp is None:
         return False, "Fail Creating Item"
@@ -112,7 +149,20 @@ def ddb_delete_table(ddb_client: typing.Any, intent_request: dict) -> tuple:
     """
     tableName = get_slot(intent_request, "tableName", True)
 
-    rsp = ddb_client.delete_table(TableName=tableName)
+    #Parameter Checking For TableName
+    # - Between 3 and 255 characters, containing only letters, numbers, underscores (_), hyphens (-), and periods (.).
+    if not valid_table_name(tableName):
+        return elicit_slot(intent_request, "tableName", "Invalid Table Name, Please Enter A Valid Table Name.")
+
+    try:
+        rsp = ddb_client.delete_table(TableName=tableName)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if rsp is None:
         return False, "Fail Deleting Table"
@@ -131,5 +181,8 @@ def ddb_handler(intent_request: dict, action: str) -> dict:
         response = ddb_delete_table(ddb_client, intent_request)
     else:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
+
+    if type(response) != tuple:
+        return response
 
     return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])

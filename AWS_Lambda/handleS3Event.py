@@ -1,6 +1,7 @@
 import boto3    #boto3 to interact with AWS services
 import typing   #typing for python typing
 import botocore  #boto3 exceptions
+import re        #regex for param checking
 import logging   #logging for cloudwatch
 import sys
 
@@ -11,6 +12,14 @@ else:
     from utils import *  #util functions for lex interactions
 
 ### S3
+
+logger = logging.getLogger()
+
+
+def valid_bucket_name(bucket_name):
+    if re.match(r'(?!.*\.\.)^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$', bucket_name):
+        return True
+    return False
 
 
 def s3_create_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
@@ -28,7 +37,19 @@ def s3_create_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
 
     bucket_name = get_slot(intent_request, "bucketName", True)
 
-    bucket = s3_client.create_bucket(Bucket=bucket_name)
+    #Parameter Checking For bucket name
+    if not valid_bucket_name(bucket_name):
+        return elicit_slot(intent_request, "bucketName", "Invalid Bucket Name, Please Enter A Valid Bucket Name.")
+
+    try:
+        bucket = s3_client.create_bucket(Bucket=bucket_name)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if bucket is None:
         return False, "Fail Creating Bucket"
@@ -56,7 +77,19 @@ def s3_put_object(s3_client: typing.Any, intent_request: dict) -> tuple:
     body = get_slot(intent_request, "body")
     key = get_slot(intent_request, "key", True)
 
-    bucket = s3_client.put_object(Bucket=bucket_name, Body=body.encode('ascii'), Key=key)
+    #Parameter Checking For bucket name
+    if not valid_bucket_name(bucket_name):
+        return elicit_slot(intent_request, "bucketName", "Invalid Bucket Name, Please Enter A Valid Bucket Name.")
+
+    try:
+        bucket = s3_client.put_object(Bucket=bucket_name, Body=body.encode('ascii'), Key=key)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if bucket is None:
         return False, "Fail Putting Object Into Bucket"
@@ -79,7 +112,19 @@ def s3_delete_object(s3_client: typing.Any, intent_request: dict) -> tuple:
     bucket_name = get_slot(intent_request, "bucketName", True)
     key = get_slot(intent_request, "key", True)
 
-    bucket = s3_client.delete_object(Bucket=bucket_name, Key=key)
+    #Parameter Checking For bucket name
+    if not valid_bucket_name(bucket_name):
+        return elicit_slot(intent_request, "bucketName", "Invalid Bucket Name, Please Enter A Valid Bucket Name.")
+
+    try:
+        bucket = s3_client.delete_object(Bucket=bucket_name, Key=key)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if bucket is None:
         return False, "Fail Deleting Object From Bucket"
@@ -101,7 +146,19 @@ def s3_delete_bucket(s3_client: typing.Any, intent_request: dict) -> tuple:
 
     bucket_name = get_slot(intent_request, "bucketName", True)
 
-    bucket = s3_client.delete_bucket(Bucket=bucket_name)
+    #Parameter Checking For bucket name
+    if not valid_bucket_name(bucket_name):
+        return elicit_slot(intent_request, "bucketName", "Invalid Bucket Name, Please Enter A Valid Bucket Name.")
+
+    try:
+        bucket = s3_client.delete_bucket(Bucket=bucket_name)
+    except botocore.exceptions.ClientError as client_error:
+        return False, "[Error] " + client_error.response["Error"]["Message"]
+    except botocore.exceptions.ParamValidationError as param_error:
+        return False, f"[Error] {param_error}"
+    except:  #For All Other Errors
+        logger.error(sys.exc_info()[0])
+        return False, f"[Error] ({sys.exc_info()[0]}) Unknown Errors. Please Retry Later!"
 
     if bucket is None:
         return False, "Fail Deleting Bucket"
@@ -130,5 +187,8 @@ def s3_handler(intent_request: dict, action: str) -> dict:
         response = s3_delete_bucket(s3_client, intent_request)
     else:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
+
+    if type(response) != tuple:
+        return response
 
     return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
