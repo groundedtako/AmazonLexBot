@@ -1,11 +1,12 @@
 ### ToDo
 
--   [ ] Enhance Conversation Flow
+-   [ ] Enhance Conversation Flow (Add CancelIntent, StartOverIntent)
 -   [ ] Figure out Tagging API
--   [ ] EC2's Golden AMI?
--   [ ] AWS Auto Scaling? / AWS Backup? / Amazon CloudWatch? / Amazon EventBridge?
+-   [ ] EC2's Golden AMI
 
 ### InProgress
+
+-   [ ] AWS Backup
 
 ### Done
 

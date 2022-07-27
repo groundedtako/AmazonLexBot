@@ -53,6 +53,21 @@ def get_session_attributes(intent_request: dict) -> dict:
     return {}
 
 
+def get_active_contexts(intent_request: dict) -> dict:
+    """Get session's active contexts based on the event input
+
+    Args:
+        intent_request (dict): Amazon Lex Event Input
+
+    Returns:
+        dict: Active Contexts or Empty dict
+    """
+    sessionState = intent_request["sessionState"]
+    if "activeContexts" in sessionState:
+        return sessionState["activeContexts"]
+    return {}
+
+
 def get_slots(intent_request: dict) -> dict:
     """Get all the slots based on the event input
 
@@ -119,6 +134,7 @@ def close(intent_request: dict, fulfillment_state: str, message: str) -> dict:
     intent_request["sessionState"]["intent"]["state"] = fulfillment_state
     return {
         "sessionState": {
+            "activeContexts" : get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "dialogAction": {
                 "type": "Close"
@@ -151,6 +167,7 @@ def elicit_intent(intent_request, message):
             "dialogAction": {
                 "type": "ElicitIntent"
             },
+            "activeContexts" : get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "intent": intent_request["sessionState"]["intent"]
         },
@@ -181,6 +198,7 @@ def elicit_slot(intent_request, slot_name, message):
                 "type": "ElicitSlot",
                 "slotToElicit": slot_name
             },
+            "activeContexts" : get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "intent": intent_request["sessionState"]["intent"]
         },
