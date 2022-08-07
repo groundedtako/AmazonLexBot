@@ -5,6 +5,7 @@ import logging  #logging for cloudwatch
 from handleDDBEvent import *  #handleDdbEvent to handle ddb events from the user
 from handleEC2Event import *  #handleEc2Event to handle ec2 events from the user
 from handleS3Event import *  #handleS3Event to handle s3 events from the user
+from handleBACKUPEvent import *  #handleBackupEvent to handle backup events from the user
 from constants import *
 from utils import *  #util functions for lex interactions
 
@@ -33,6 +34,8 @@ def dispatch(intent_request: dict) -> dict:
         return ddb_handler(intent_request, action)
     elif resourceType == 'S3':
         return s3_handler(intent_request, action)
+    elif resourceType == "Backup":
+        return backup_handler(intent_request, action)
     else:
         intent = get_intent_name(intent_request)
         #For other intent
