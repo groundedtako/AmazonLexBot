@@ -221,4 +221,4 @@ def backup_handler(intent_request: dict, action: str) -> dict:
     if type(response) != tuple:
         return response
 
-    return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
+    return close(intent_request, "Fulfilled" if response[0] else "Failed", [response[1]] + ENDING_PHRASE)

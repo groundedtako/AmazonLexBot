@@ -17,6 +17,16 @@ else:
 logger = logging.getLogger()
 
 
+def get_image_id(os: str):
+    if os == "Linux":
+        return LINUX_AMI
+    elif os == "Windows":
+        return WINDOWS_AMI
+    elif os == "Ubuntu":
+        return UBUNTU_AMI
+    return "Error"
+
+
 def ec2_lifecycle_control(ec2_client: typing.Any, intent_request: dict, action: str) -> tuple:
     """Controlling Instance's LifeCycle in Amazon EC2
 
@@ -78,7 +88,7 @@ def ec2_create_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
         tuple: (Status, The message that should be shown to the user)
     """
 
-    imageId = get_slot(intent_request, "amazonMachineImages")
+    amiOS = get_slot(intent_request, "amiOS")
     minCount = int(get_slot(intent_request, "minCount"))
     maxCount = int(get_slot(intent_request, "maxCount"))
     instanceType = get_slot(intent_request, "instanceType")
@@ -86,7 +96,7 @@ def ec2_create_instance(ec2_client: typing.Any, intent_request: dict) -> tuple:
 
     try:
         instance = ec2_client.run_instances(
-            ImageId=imageId,
+            ImageId=get_image_id(amiOS),
             MinCount=minCount,
             MaxCount=maxCount,
             InstanceType=instanceType,
@@ -126,4 +136,4 @@ def ec2_handler(intent_request: dict, action: str) -> dict:
     else:
         response = (False, f"Sorry Action : {action} Not Supported Yet!")
 
-    return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
+    return close(intent_request, "Fulfilled" if response[0] else "Failed", [response[1]] + ENDING_PHRASE)

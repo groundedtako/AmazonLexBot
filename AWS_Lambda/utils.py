@@ -119,7 +119,17 @@ There are 5 type of dialog actions (https://docs.aws.amazon.com/lex/latest/dg/AP
 '''
 
 
-def close(intent_request: dict, fulfillment_state: str, message: str) -> dict:
+def convertMessage(message: str):
+    if message is None:
+        return None
+    elif type(message) == str:
+        return [{"contentType": "PlainText", "content": message}]
+    #Message Array
+    else:
+        return [{"contentType": "PlainText", "content": msg} for msg in message]
+
+
+def close(intent_request: dict, fulfillment_state: str, message: list) -> dict:
     """Generate response back to Amazon Lex with Dialog Action = Close
        - Indicates that there will not be a response from the user.
 
@@ -134,17 +144,14 @@ def close(intent_request: dict, fulfillment_state: str, message: str) -> dict:
     intent_request["sessionState"]["intent"]["state"] = fulfillment_state
     return {
         "sessionState": {
-            "activeContexts" : get_active_contexts(intent_request),
+            "activeContexts": get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "dialogAction": {
                 "type": "Close"
             },
             "intent": intent_request["sessionState"]["intent"]
         },
-        "messages": [{
-            "contentType": "PlainText",
-            "content": message
-        }] if message != None else None,
+        "messages": convertMessage(message),
         "sessionId": intent_request["sessionId"],
         "requestAttributes": intent_request["requestAttributes"] if "requestAttributes" in intent_request else None
     }
@@ -161,20 +168,17 @@ def elicit_intent(intent_request, message):
     Returns:
         dict: Response for elicit intent dialog action
     """
-    intent_request["sessionState"]["intent"]["state"] = "InProgress"
+    intent_request["sessionState"]["intent"]["state"] = "Fulfilled"
     return {
         "sessionState": {
             "dialogAction": {
                 "type": "ElicitIntent"
             },
-            "activeContexts" : get_active_contexts(intent_request),
+            "activeContexts": get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "intent": intent_request["sessionState"]["intent"]
         },
-        "messages": [{
-            "contentType": "PlainText",
-            "content": message
-        }] if message != None else None,
+        "messages": convertMessage(message),
         "requestAttributes": intent_request["requestAttributes"] if "requestAttributes" in intent_request else None
     }
 
@@ -198,13 +202,10 @@ def elicit_slot(intent_request, slot_name, message):
                 "type": "ElicitSlot",
                 "slotToElicit": slot_name
             },
-            "activeContexts" : get_active_contexts(intent_request),
+            "activeContexts": get_active_contexts(intent_request),
             "sessionAttributes": get_session_attributes(intent_request),
             "intent": intent_request["sessionState"]["intent"]
         },
-        "messages": [{
-            "contentType": "PlainText",
-            "content": message
-        }] if message != None else None,
+        "messages": convertMessage(message),
         "requestAttributes": intent_request["requestAttributes"] if "requestAttributes" in intent_request else None
     }

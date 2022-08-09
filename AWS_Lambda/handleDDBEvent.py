@@ -8,8 +8,10 @@ import sys
 #Hard Coded In Order To Test
 if __name__ == 'AWS_Lambda.handleDDBEvent':
     from AWS_Lambda.utils import *
+    from AWS_Lambda.constants import *
 else:
     from utils import *  #util functions for lex interactions
+    from constants import *
 
 
 ### DynamoDB
@@ -185,4 +187,4 @@ def ddb_handler(intent_request: dict, action: str) -> dict:
     if type(response) != tuple:
         return response
 
-    return close(intent_request, "Fulfilled" if response[0] else "Failed", response[1])
+    return close(intent_request, "Fulfilled" if response[0] else "Failed", [response[1]] + ENDING_PHRASE)

@@ -25,7 +25,7 @@ def dispatch(intent_request: dict) -> dict:
     #Check if action is here or not
     if resourceType in AVAILABLE_RESOURCES and action is None:
         logger.debug("Missing Action!")
-        return close(intent_request, "Fulfilled", f"What action you want to do with {resourceType}?")
+        return close(intent_request, "Fulfilled", [f"What action you want to do with {resourceType}?", f"We Currently Support The Following Operations for {resourceType}: "] + SUPPORTED_ACTIONS[resourceType])
 
     #Switch Statement Available after Python 3.10
     if resourceType == 'EC2':
@@ -38,8 +38,9 @@ def dispatch(intent_request: dict) -> dict:
         return backup_handler(intent_request, action)
     else:
         intent = get_intent_name(intent_request)
+        if intent == "ExitIntent":
+            return close(intent_request, "Fulfilled", f"Thanks you for using Resource Management Bot! You can always reprompt me by saying Hi!")
         #For other intent
-
     raise Exception("Intent: " + intent + " Not Supported Yet!")
 
 
